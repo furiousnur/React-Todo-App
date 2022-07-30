@@ -1,26 +1,34 @@
-import React from 'react';
+import React, { useState } from "react";
+import { v4 as uuid } from "uuid";
 import Todos from "./Todos";
 import style from "./home.module.css"
 import NewTodo from "./NewTodo";
 
-const dummyTodos = [
-    {
-        id: 1,
-        title: 'todo title 1',
-        desc: 'dummy todo description 1'
-    },{
-        id: 2,
-        title: 'todo title 2',
-        desc: 'dummy todo description 2'
-    }
-]
-
 const Home = () => {
+
+    const [todos, setTodos] = useState([]);
+
+    const handleAddTodo = (todo) => {
+        setTodos((prevTodos) => {
+            return [...prevTodos, { id: uuid(), todo }];
+        });
+    };
+
+    const handleRemoveTodo = (id) => {
+        setTodos((prevTodos) => {
+            const filteredTodos = prevTodos.filter((todo) => todo.id !== id);
+            return filteredTodos;
+        });
+    };
+
     return (
         <div className={style.container}>
-            <h1 style={{color: "white"}}>Todo App</h1>
-            <NewTodo />
-            <Todos todos={dummyTodos}/>
+            <h1 style={{ color: "white" }}>Todo App</h1>
+            <NewTodo onAddTodo={handleAddTodo} />
+            {todos && <Todos todos={todos} onRemoveTodo={handleRemoveTodo} />}
+            <button className={style.btn} onClick={() => { setTodos([]); }} >
+                Clear All todos
+            </button>
         </div>
     );
 };
